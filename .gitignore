@@ -1,0 +1,4 @@
+node_modules/
+lambda/site_change/service_account.json
+lambda/site_change/test.js
+.vscode/launch.json
