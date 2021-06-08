@@ -39,4 +39,4 @@ jobs:
           aws_region: us-east-2
           function_name: site-change-check
           zip_file: ./lambda/site_change/bundle.zip
-          timeout: 10
+          timeout: 15
