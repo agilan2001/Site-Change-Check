@@ -33,9 +33,14 @@ exports.handler = async (event) => {
     var change_det = false;
 
     
+    // compare site_data from db and live fetched site_data and look for changes in the specified regions
+
     stat = await Promise.all(site_details.map((e, i) => new Promise((resolve, reject) => {
         fetch(e.site_url, { mode: 'no-cors' }).then(res => res.text()).then(data => {
+
+            //extract site data from the specified regions
             var site_data = e.compare_reg.reduce((acc, cur) => (acc + data.substring(...cur)), "")
+
             db.ref("sites/" + e.site_title + "/data").once("value").then(snap => {
                 db_data = snap.val();
                 if (db_data == site_data) {
@@ -51,12 +56,14 @@ exports.handler = async (event) => {
     })))
 
 
+    // if change is detected send an email
+
     if (change_det) {
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
                 user: 'agilanvlr2001@gmail.com',
-                pass: 'jyumjymdymforksp'
+                pass: process.env.GOOGLE_APP_PASS //stored in lambda env variable
             }
         });
 
