@@ -2,6 +2,7 @@ var admin = require("firebase-admin");
 var nodemailer = require("nodemailer");
 var fetch = require("node-fetch");
 var {site_details} = require('./site_details');
+var {JSDOM} = require("jsdom")
 
 var serviceAccount = {
     "type": "service_account",
@@ -39,7 +40,9 @@ exports.handler = async (event) => {
         fetch(e.site_url, { mode: 'no-cors' }).then(res => res.text()).then(data => {
 
             //extract site data from the specified regions
-            var site_data = e.compare_reg.reduce((acc, cur) => (acc + data.substring(...cur)), "")
+            //var site_data = e.compare_reg.reduce((acc, cur) => (acc + data.substring(...cur)), "")
+            var site_document = new JSDOM(data).window.document;
+            var site_data = e.compare_reg.reduce((acc, cur) => (acc + site_document.querySelector(cur).textContent), "")
 
             db.ref("sites/" + e.site_title + "/data").once("value").then(snap => {
                 db_data = snap.val();

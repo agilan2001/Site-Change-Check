@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "firebase-admin": "^9.9.0",
+    "jsdom": "^16.6.0",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.6.1"
   }
