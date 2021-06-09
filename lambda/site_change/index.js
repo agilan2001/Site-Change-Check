@@ -42,7 +42,9 @@ exports.handler = async (event) => {
             //extract site data from the specified regions
             //var site_data = e.compare_reg.reduce((acc, cur) => (acc + data.substring(...cur)), "")
             var site_document = new JSDOM(data).window.document;
-            var site_data = e.compare_reg.reduce((acc, cur) => (acc + site_document.querySelector(cur).textContent), "")
+
+            //if specified region is not found, compare and store the entire body
+            var site_data = e.compare_reg.reduce((acc, cur) => (acc + (site_document.querySelector(cur)||site_document.querySelector('body')).textContent), "")
 
             db.ref("sites/" + e.site_title + "/data").once("value").then(snap => {
                 db_data = snap.val();
