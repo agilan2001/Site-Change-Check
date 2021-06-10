@@ -48,7 +48,7 @@ exports.handler = async (event) => {
             var site_document = new JSDOM(data).window.document;
 
             //if specified region is not found, compare and store the entire body
-            var site_data = e.compare_reg.reduce((acc, cur) => (acc + (site_document.querySelector(cur)||site_document.querySelector('body')).textContent), "")
+            var site_data = e.compare_reg.reduce((acc, cur) => (acc + (site_document.querySelector(cur)||site_document.querySelector('body')).textContent), "").trim()
 
             db.ref("sites/" + e.site_title + "/data").once("value").then(snap => {
                 db_data = snap.val();
@@ -99,7 +99,7 @@ exports.handler = async (event) => {
                         `<li>${site_details[i].site_title} : ${site_details[i].site_url}<br>
                             <ul>
                                 ${diff[i].map((m,n)=>{
-                                    return `<li>${m.type} -- ${m.value.substring(0,15)}...</li>`
+                                    return `<li>${m.type} -- ${m.value.trim().substring(0,15)}...</li>`
                                 })}
                             </ul>
                         </li>`
