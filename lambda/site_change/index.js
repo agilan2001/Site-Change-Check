@@ -2,7 +2,9 @@ var admin = require("firebase-admin");
 var nodemailer = require("nodemailer");
 var fetch = require("node-fetch");
 var {site_details} = require('./site_details');
-var {JSDOM} = require("jsdom")
+var {JSDOM} = require("jsdom");
+var sm = require("string-mismatch");
+var greedyCheck = new sm.Greedy();
 
 var serviceAccount = {
     "type": "service_account",
@@ -36,6 +38,8 @@ exports.handler = async (event) => {
     
     // compare site_data from db and live fetched site_data and look for changes in the specified regions
 
+    var diff = []
+
     stat = await Promise.all(site_details.map((e, i) => new Promise((resolve, reject) => {
         fetch(e.site_url, { mode: 'no-cors' }).then(res => res.text()).then(data => {
 
@@ -52,8 +56,18 @@ exports.handler = async (event) => {
                     resolve(false)
                 } else {
                     change_det = true;
+
+                    // compute and store the first 5 differences
+                    cur_diff = [];
+                    greedyCheck.differences(db_data || "", site_data).slice(0,5).forEach((p,q)=>{
+                        if(p.type == "eql") return;
+                        cur_diff.push(p)
+                    })
+                    diff[i] = cur_diff;
                     db.ref("sites/" + e.site_title).update({
-                        data: site_data, lst_upd: Date.now(), url: e.site_url
+                        data: site_data, 
+                        lst_upd: Date.now(), url: e.site_url,
+                        last_diff:cur_diff
                     }).then(() => resolve(true));
                 }
             })
@@ -81,7 +95,15 @@ exports.handler = async (event) => {
             <ul>
                 ${stat.map((e, i) => {
                 if (e) {
-                    return `<li>${site_details[i].site_title} : ${site_details[i].site_url}</li>`
+                    return(
+                        `<li>${site_details[i].site_title} : ${site_details[i].site_url}<br>
+                            <ul>
+                                ${diff[i].map((m,n)=>{
+                                    return `<li>${m.type} -- ${m.value.substring(0,15)}...</li>`
+                                })}
+                            </ul>
+                        </li>`
+                    )                     
                 } else {
                     return ""
                 }
