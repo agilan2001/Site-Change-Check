@@ -100,7 +100,7 @@ exports.handler = async (event) => {
                             <ul>
                                 ${diff[i].map((m,n)=>{
                                     return `<li>${m.type} -- ${m.value.trim().substring(0,15)}...</li>`
-                                })}
+                                }).join("")}
                             </ul>
                         </li>`
                     )                     
