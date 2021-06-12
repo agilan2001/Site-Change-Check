@@ -9,6 +9,6 @@
 
 
 
-<img src = "screenshots/mail.png" width=500>
+<img src = "screenshots/mail2.png" width=500>
 
 *Mail received after Site Change Detected*
