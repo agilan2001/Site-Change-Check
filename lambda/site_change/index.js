@@ -55,9 +55,16 @@ exports.handler = async (event) => {
     })))
 
 
-    // if change is detected send an email
+    // if change is detected commit changes send an email
 
     if (change_det) {
+
+        var proc = require('child_process')
+        proc.execSync("git config user.name agilan2001")
+        proc.execSync("git config user.email agilanvlr2001@gmail.com")
+        proc.execSync(`git commit -am "Update Diffs"`)
+
+
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -91,14 +98,10 @@ exports.handler = async (event) => {
             </ul>
         `
         };
-        // await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);
     }
 
-    var proc = require('child_process')
-    proc.execSync("git config user.name agilan2001")
-    proc.execSync("git config user.email agilanvlr2001@gmail.com")
-    proc.execSync(`git commit -am "Update Diffs"`)
-
+    
     return stat;
 
 };
