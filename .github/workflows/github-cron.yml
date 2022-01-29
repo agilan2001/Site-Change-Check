@@ -1,0 +1,28 @@
+name: Cron to run site-change-check
+on: 
+  push:
+    branches:    
+      - 'master'
+  schedule:
+    - cron: '0,30 * * * *'
+jobs:
+  check_and_change:
+    name: build and deploy lambda
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 12.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12.x
+      - name: npm install, run checks, git push
+        run: |
+          cd lambda/site_change
+          npm install
+          node test
+          git push
+        env:
+          CI: true
+          GOOGLE_APP_PASS: ${{ secrets.GOOGLE_APP_PASS }}
+
+      
