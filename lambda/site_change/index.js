@@ -30,7 +30,11 @@ exports.handler = async (event) => {
             var site_data = e.compare_reg.reduce((acc, cur) => (acc + (site_document.querySelector(cur)||site_document.querySelector('body')).textContent), "").trim()
 
             fs.readFile("./sites/" + e.site_title + ".json", (err,prev_data) => {
-                var prev_site_data = JSON.parse(prev_data.toString()).data;
+                var prev_site_data;
+                if(err)
+                    prev_site_data="";
+                else
+                    prev_site_data = JSON.parse(prev_data.toString()).data;
                 if (prev_site_data == site_data) {
                     resolve(false)
                 } else {
