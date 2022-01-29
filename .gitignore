@@ -1,3 +1,4 @@
 node_modules/
 lambda/site_change/service_account.json
 .vscode/launch.json
+lambda/site_change/package-lock.json
