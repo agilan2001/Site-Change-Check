@@ -1,8 +1,8 @@
 name: Cron to run site-change-check
 on: 
-  # push:
-  #   branches:    
-  #     - 'master'
+  push:
+    branches:    
+      - 'master'
   schedule:
     - cron: '0,30 * * * *'
 jobs:
